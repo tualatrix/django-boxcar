@@ -24,7 +24,7 @@ class Service(models.Model):
         for title, link in language_tips.get_title_and_link():
             print 'Found title and link: ', title, link
             notification, created = Notification.objects.get_or_create(screen_name=u'酷词',
-                                                                       source_url=link,
+                                                                       original_url=link,
                                                                        message=title,
                                                                        service=self)
             if created:
@@ -32,13 +32,15 @@ class Service(models.Model):
 
     def create_notification_pages(self):
         for notification in Notification.objects.filter(service=self, is_sent=False):
-            if notification.source_url:
-                content = language_tips.get_content_from_url(notification.source_url)
+            if notification.original_url:
+                content = language_tips.get_content_from_url(notification.original_url)
                 page, created = NotificationPage.objects.get_or_create(notification=notification)
                 if created:
                     page.title = notification.message
                     page.content = content
                     page.save()
+                    notification.source_url = page.get_absolute_url()
+                    notification.save()
 
     def send_notifications(self):
         pass
@@ -47,6 +49,7 @@ class Notification(models.Model):
     screen_name = models.CharField(max_length=24)
     message = models.CharField(max_length=140, unique=True)
     source_url = models.URLField(blank=True)
+    original_url = models.URLField(blank=True)
     service = models.ForeignKey(Service)
     is_sent = models.BooleanField(default=False)
 
@@ -109,3 +112,7 @@ class NotificationPage(models.Model):
 
     def __unicode__(self):
         return self.title
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('notification_page_detail', [str(self.id)])
