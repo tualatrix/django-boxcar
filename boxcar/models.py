@@ -27,7 +27,7 @@ class Notification(models.Model):
     def build_values(self):
         return {'notification[from_screen_name]' : self.screen_name,
                 'notification[message]' : self.message,
-                'notification[from_service_id]' : int(time()*100)
+                'notification[from_service_id]' : int(time()*100),
                 'notification[source_url]': self.source_url,
                 'notification[icon_url]': self.service.icon_url,
                 }
