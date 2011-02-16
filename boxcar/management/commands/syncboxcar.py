@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 
+from django.contrib.auth.models import User
 from boxcar.models import Service
 
 class Command(BaseCommand):
@@ -12,4 +13,4 @@ class Command(BaseCommand):
             sync_list.extend(list(Service.objects.all()))
 
         for service in sync_list:
-            pass
+            service.fetch_notifications()
