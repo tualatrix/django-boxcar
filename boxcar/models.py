@@ -12,11 +12,15 @@ class Service(models.Model):
     api_secret = models.CharField(max_length=255)
     api_key = models.CharField(max_length=255)
 
+    def __unicode__(self):
+        return self.name
+
 class Notification(models.Model):
     screen_name = models.CharField(max_length=24)
     message = models.TextField()
     source_url = models.URLField(blank=True)
     service = models.ForeignKey(Service)
+    is_sent = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.message

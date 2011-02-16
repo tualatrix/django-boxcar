@@ -1,0 +1,25 @@
+[
+  {
+    "pk": 1, 
+    "model": "boxcar.service", 
+    "fields": {
+      "name": "Language Tips", 
+      "icon_url": "", 
+      "api_secret": "XoTYTRiHYfC82m7DLlji5yO9Axb2Gg2rl1L2so6z", 
+      "api_key": "L2Kjdc4c1yDDEH8YiADH", 
+      "website_url": "http://www.chinadaily.com.cn/language_tips/index.html", 
+      "description": "Push the latest article of http://www.chinadaily.com.cn/language_tips/index.html"
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "boxcar.notification", 
+    "fields": {
+      "message": "\u4f60\u662f\u4e00\u5fc3\u4e8c\u7528\u7684supertasker\u5417", 
+      "is_sent": 0,
+      "screen_name": "\u9177\u8bcd", 
+      "service": 1, 
+      "source_url": "http://www.chinadaily.com.cn/language_tips/trans/2011-02/16/content_12022973.htm"
+    }
+  }
+]
