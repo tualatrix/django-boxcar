@@ -1,8 +1,10 @@
+# coding: utf-8
+
 import urllib
 import hashlib
 
 from django.db import models
-from django.contrib.auth.models import User
+from boxcar.helpers import language_tips 
 
 class Service(models.Model):
     name = models.CharField(max_length=255)
@@ -14,6 +16,19 @@ class Service(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def fetch_notifications(self):
+        for title, link in language_tips.get_title_and_link():
+            print title, link
+            notification, created = Notification.objects.get_or_create(screen_name=u'酷词',
+                                                                       source_url=link,
+                                                                       message=title,
+                                                                       service=self)
+            if created:
+                print notification
+
+    def send_notifications(self):
+        pass
 
 class Notification(models.Model):
     screen_name = models.CharField(max_length=24)
@@ -31,7 +46,7 @@ class Notification(models.Model):
     def build_values(self):
         return {'notification[from_screen_name]' : self.screen_name,
                 'notification[message]' : self.message,
-                'notification[from_service_id]' : int(time()*100),
+                'notification[from_remote_service_id]' : int(time()*100),
                 'notification[source_url]': self.source_url,
                 'notification[icon_url]': self.service.icon_url,
                 }
