@@ -46,7 +46,7 @@ class Service(models.Model):
                     page.content = content
                     page.save()
 
-                    notification.source_url = current_site.domain + page.get_absolute_url()
+                    notification.source_url = 'http://' + current_site.domain + page.get_absolute_url()
                     notification.save()
 
                     print 'notificationpage created', page
