@@ -3,6 +3,8 @@
 import urllib
 import hashlib
 
+from time import time
+
 from django.db import models
 from boxcar.helpers import language_tips 
 
@@ -19,7 +21,6 @@ class Service(models.Model):
 
     def fetch_notifications(self):
         for title, link in language_tips.get_title_and_link():
-            print title, link
             notification, created = Notification.objects.get_or_create(screen_name=u'酷词',
                                                                        source_url=link,
                                                                        message=title,
