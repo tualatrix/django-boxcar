@@ -19,7 +19,7 @@ def get_title_and_link():
         for k, v in tip.attrs:
             if k == 'href':
                 link = v
-                if not line.startswith('http://'):
+                if not link.startswith('http://'):
                     link = os.path.join(os.path.dirname(url), link)
                 break
         yield title, link
