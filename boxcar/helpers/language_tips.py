@@ -1,4 +1,5 @@
 # coding: utf-8
+import os
 import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -7,7 +8,8 @@ import urllib
 from BeautifulSoup import BeautifulSoup, Tag, NavigableString
 
 def get_title_and_link():
-    soup = BeautifulSoup(urllib.urlopen('http://www.chinadaily.com.cn/language_tips/trans/trans_collect.html').read())
+    url = 'http://www.chinadaily.com.cn/language_tips/trans/trans_collect.html'
+    soup = BeautifulSoup(urllib.urlopen(url).read())
     tips = soup.findAll('a', attrs={'target': '_blank'})
 
     for tip in reversed(tips):
@@ -17,6 +19,8 @@ def get_title_and_link():
         for k, v in tip.attrs:
             if k == 'href':
                 link = v
+                if not line.startswith('http://'):
+                    link = os.path.join(os.path.dirname(url), link)
                 break
         yield title, link
 
