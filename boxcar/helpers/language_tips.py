@@ -16,3 +16,8 @@ def get_title_and_link():
                 link = v
                 break
         yield title, link
+
+def get_content_from_url(url):
+    soup = BeautifulSoup(open('/home/ted/.virtualenvs/ttime/src/boxcar/boxcar/helpers/content_12022973.html').read())
+    div = soup.findAll('div', attrs={'class': 'sanjineiwen'})[0]
+    return div.renderContents()
