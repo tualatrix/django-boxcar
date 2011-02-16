@@ -15,3 +15,4 @@ class Command(BaseCommand):
         for service in sync_list:
             service.fetch_notifications()
             service.create_notification_pages()
+            service.send_notifications()

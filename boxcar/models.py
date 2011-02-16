@@ -6,6 +6,8 @@ import hashlib
 from time import time
 
 from django.db import models
+from django.contrib.sites.models import Site
+
 from boxcar.helpers import language_tips 
 
 class Service(models.Model):
@@ -28,22 +30,35 @@ class Service(models.Model):
                                                                        message=title,
                                                                        service=self)
             if created:
-                print notification
+                print 'notification created:', notification
 
     def create_notification_pages(self):
+        current_site = Site.objects.get_current()
+
         for notification in Notification.objects.filter(service=self, is_sent=False):
             if notification.original_url:
-                content = language_tips.get_content_from_url(notification.original_url)
                 page, created = NotificationPage.objects.get_or_create(notification=notification)
+
                 if created:
+                    content = language_tips.get_content_from_url(notification.original_url)
+
                     page.title = notification.message
                     page.content = content
                     page.save()
-                    notification.source_url = page.get_absolute_url()
+
+                    notification.source_url = current_site.domain + page.get_absolute_url()
                     notification.save()
 
+                    print 'notificationpage created', page
+
     def send_notifications(self):
-        pass
+        for notification in Notification.objects.filter(service=self, is_sent=False):
+            result = notification.broadcast()
+            if result is 0:
+                notification.is_sent = True
+                notification.save()
+
+                print 'notification is sent', notification
 
 class Notification(models.Model):
     screen_name = models.CharField(max_length=24)
@@ -89,21 +104,21 @@ class Notification(models.Model):
         values = self.build_values()
         values['secret'] = self.service.api_secret
 
-        self.do_send_task(url, values)
+        return self.do_send_task(url, values)
 
     def send(self, email):
         url = self.build_url('notifications')
         values = self.build_values()
         values['email'] = hashlib.md5(email).hexdigest()
 
-        self.do_send_task(url, values)
+        return self.do_send_task(url, values)
 
     def subscribe(self, email):
         url = self.build_url('subscribe')
         values = self.build_values()
         values['email'] = hashlib.md5(email).hexdigest()
 
-        self.do_send_task(url, values)
+        return self.do_send_task(url, values)
 
 class NotificationPage(models.Model):
     title = models.CharField(max_length=140, blank=True)
